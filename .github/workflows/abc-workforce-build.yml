@@ -1,0 +1,29 @@
+name: ABC Workforce Exchange Build
+
+on:
+  push:
+    paths:
+      - 'abc-workforce-exchange/**'
+      - '.github/workflows/abc-workforce-build.yml'
+  pull_request:
+    paths:
+      - 'abc-workforce-exchange/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: abc-workforce-exchange
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: abc-workforce-exchange/package-lock.json
+      - run: npm install
+      - run: npm run build
+        env:
+          DATABASE_URL: postgresql://demo:demo@localhost:5432/demo
+          SESSION_SECRET: ci-only-session-secret-change-before-production
